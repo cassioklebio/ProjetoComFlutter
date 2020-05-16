@@ -3,8 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:market_place/pages/home.dart';
 
 import '../pages/home.dart';
-import '../pages/list.dart';
-import '../models/Lista.dart';
+import 'package:market_place/models/Lista.dart';
 import '../layout.dart';
 
 enum ListAction {edit, delete }
@@ -23,10 +22,11 @@ class HomeList extends StatefulWidget {
 
 class _HomeListState extends State<HomeList> {
 
+  TextEditingController _cEdit = TextEditingController();
 
-   List<Widget> values = List<Widget>();
+  List<Widget> values = List<Widget>();
 
-   Lista listBO = Lista();
+  Lista listBO = Lista();
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +61,7 @@ class _HomeListState extends State<HomeList> {
             onSelected: (ListAction result) {
               switch(result){
                 case ListAction.edit:
+                  this.showEditDialog(context, item);
                 break;
                 case ListAction.delete:
                 listBO.delete(item['pk_lista']).then((deleted){
@@ -93,13 +94,16 @@ class _HomeListState extends State<HomeList> {
             },
 
          ),
+        //  onTap: (){
+        //    Navigator.of(context).pushNamed(ListPage.tag);
+        //  },
        );
       },
     );
   }
 
   void showEditDialog(BuildContext context, Map item){
-    TextEditingController _cEdit = TextEditingController();
+    
     _cEdit.text = item['name'];
 
     showDialog(
@@ -140,6 +144,15 @@ class _HomeListState extends State<HomeList> {
               color: Layout.primary(),
               child: Text('salvar', style: TextStyle(color: Layout.light())),
               onPressed: () {
+                Lista listaBO = Lista();
+                listaBO.update({
+                  'name': _cEdit.text,
+                  'created': DateTime.now().toString()
+                }, item['pk_lista']).then((saved){
+
+                  Navigator.of(ctx).pop();
+                  Navigator.of(ctx).pushReplacementNamed(HomePage.tag);
+                });
                 
               },
               ),  
