@@ -106,7 +106,7 @@ class Layout {
                         child: Text('Adicionar ', style: TextStyle(fontSize: 12, color: Layout.write())),
                         onPressed: (){
 
-                          Lista listaBO = Lista();
+                          ModelLista listaBO = ModelLista();
                           listaBO.insert({
                             'name': _c.text,
                             'created': DateTime.now().toString()

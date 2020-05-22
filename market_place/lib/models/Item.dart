@@ -2,22 +2,22 @@ import 'package:market_place/models/AbstractModel.dart';
 import 'package:market_place/application.dart';
 import 'package:sqflite/sqflite.dart';
 
-class ModelLista extends AbstractModel {
+class ModelItem extends AbstractModel {
 
   ///
   ///Singleton
   ///
   
-  static ModelLista _this;
+  static ModelItem _this;
 
-  factory ModelLista() {
+  factory ModelItem() {
     if(_this == null){
-      _this = ModelLista.getInstance();
+      _this = ModelItem.getInstance();
     }
     return _this;
   }
 
-  ModelLista.getInstance() : super();
+  ModelItem.getInstance() : super();
 
   ///
   ///The Instanse
@@ -33,7 +33,7 @@ class ModelLista extends AbstractModel {
   @override
   Future<bool> delete(dynamic id) async {
     Database db = await this.getDb();
-    int rows = await db.delete('lista', where: 'pk_lista = ? ', whereArgs: [id]);
+    int rows = await db.delete('item', where: 'pk_item = ? ', whereArgs: [id]);
 
     
     return (rows !=0);
@@ -42,7 +42,7 @@ class ModelLista extends AbstractModel {
   @override
   Future<Map> getItem(dynamic where) async {
     Database db = await this.getDb();
-    List<Map> items = await db.query('lista', where: 'pk_lista = ?', whereArgs: [where], limit: 1 );
+    List<Map> items = await db.query('item', where: 'pk_item = ?', whereArgs: [where], limit: 1 );
 
     Map result = Map();
     if(items.isNotEmpty){
@@ -55,7 +55,7 @@ class ModelLista extends AbstractModel {
   @override
   Future<int> insert(Map<String, dynamic> values) async {
      Database db = await this.getDb();
-     int newId = await db.insert('lista', values);
+     int newId = await db.insert('item', values);
 
      return newId;
     
@@ -65,15 +65,27 @@ class ModelLista extends AbstractModel {
   Future<List<Map>> list() async {
 
     Database db = await this.getDb();
-    return db.query('lista', 
+    return db.query('item', 
      orderBy: 'created DESC');
-    //return db.rawQuery('SELECT * fROM lista ORDER BY created DESC');
+    //return db.rawQuery('SELECT * fROM item ORDER BY created DESC');
   }
+
+  /// Retorna todos os items da lista
+  /// 
+  /// [fkLista] ID da lista
+  Future<List<Map>> itemByList(int fkLista) async {
+    Database db = await this.getDb();
+    return db.query('item', where: 'fk_lista = $fkLista', orderBy: 'created DESC');
+    //return db.rawQuery('SELECT * fROM item WHERE fk_lista = $fkLista ORDER BY created DESC');
+  }
+
+
+
 
   @override
   Future<bool> update(Map<String, dynamic> values, where) async {
     Database db = await this.getDb();
-    int rows = await db.update('lista', values, where: 'pk_lista = ?', whereArgs: [where]);
+    int rows = await db.update('item', values, where: 'pk_item = ?', whereArgs: [where]);
 
     return (rows != 0);
    

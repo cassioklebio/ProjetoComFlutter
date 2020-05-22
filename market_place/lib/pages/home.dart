@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:market_place/layout.dart';
 import 'package:market_place/models/Lista.dart';
 import '../widgets/HomeList.dart';
+import 'dart:async';
 
 class HomePage extends StatefulWidget{
 
@@ -14,13 +15,18 @@ class HomePage extends StatefulWidget{
 
 class _HomePageState extends State<HomePage> {
 
-  Lista listaBO = Lista();
+  final HomeListBloc listaBloc = HomeListBloc();
+
+  void disponse() {
+    listaBloc.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
    // 
-    final  content = FutureBuilder(
-      future: listaBO.list(),
+    final  content = StreamBuilder<List<Map>>(
+      stream: listaBloc.lists,
       builder: (BuildContext context, AsyncSnapshot snapshot){
         switch(snapshot.connectionState){
           case ConnectionState.none:
@@ -40,5 +46,27 @@ class _HomePageState extends State<HomePage> {
 
 
     return Layout.getContent(context, content);
+  }
+}
+
+class HomeListBloc {
+
+  HomeListBloc(){
+    getList();
+  }
+
+  ModelLista listaBo = ModelLista();
+
+  final _controller = StreamController<List<Map>>.broadcast();
+
+  get lists => _controller.stream;
+
+  dispose(){
+    _controller.close();
+
+  }
+
+  getList() async {
+    _controller.sink.add(await listaBo.list());
   }
 }

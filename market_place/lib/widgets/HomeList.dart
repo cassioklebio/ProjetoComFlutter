@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:market_place/pages/home.dart';
+import 'package:market_place/pages/items.dart';
+
 
 import '../pages/home.dart';
 import 'package:market_place/models/Lista.dart';
@@ -26,7 +28,7 @@ class _HomeListState extends State<HomeList> {
 
   List<Widget> values = List<Widget>();
 
-  Lista listBO = Lista();
+  ModelLista listBO = ModelLista();
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +56,7 @@ class _HomeListState extends State<HomeList> {
         DateTime created = DateTime.tryParse(item['created']);
 
        return ListTile(
-         leading: Icon(Icons.pages),
+         leading: Icon(Icons.pages, size: 42),
          title: Text(item['name']),
          subtitle: Text(df.format(created)),
          trailing: PopupMenuButton<ListAction>(
@@ -94,9 +96,14 @@ class _HomeListState extends State<HomeList> {
             },
 
          ),
-        //  onTap: (){
-        //    Navigator.of(context).pushNamed(ListPage.tag);
-        //  },
+         onTap: (){
+
+          //Aprenda na lista qual esta selecionada
+          ItemsPage.pkList = item['pk_lista'];
+
+           //Muda de pagina 
+           Navigator.of(context).pushNamed(ItemsPage.tag);
+         },
        );
       },
     );
@@ -144,7 +151,7 @@ class _HomeListState extends State<HomeList> {
               color: Layout.primary(),
               child: Text('salvar', style: TextStyle(color: Layout.light())),
               onPressed: () {
-                Lista listaBO = Lista();
+                ModelLista listaBO = ModelLista();
                 listaBO.update({
                   'name': _cEdit.text,
                   'created': DateTime.now().toString()
